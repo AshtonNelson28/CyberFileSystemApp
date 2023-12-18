@@ -6,9 +6,16 @@ const fs = require("fs");
 const { mkdirp } = require("mkdirp");
 const jwt = require("jsonwebtoken");
 const { authenticate } = require("ldap-authentication");
+const https = require('https');
+
+
+const privateKey = fs.readFileSync(path.join(__dirname, 'localhost.key'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'localhost.cert'), 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const HTTPS_PORT = process.env.PORT || 3001;
 app.use(cors()); // For simplicity, allowing all origins
 app.use(express.json()); // To parse JSON request bodies
 
@@ -165,6 +172,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+
 // Modify multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -256,7 +264,7 @@ app.get(
   }
 );
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(HTTPS_PORT, () => {
+  console.log(`HTTPS Server running on port ${HTTPS_PORT}`);
 });

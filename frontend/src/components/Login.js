@@ -7,14 +7,16 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [displayError, setDisplayError] = useState(false);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Replace '/api/login' if your endpoint is different
-      const response = await axios.post('http://localhost:3001/api/login', { username, password });
+      // Use 'https' in the URL
+      const response = await axios.post('https://localhost:3001/api/login', { username, password });
+
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('homeDirectory', response.data.user.homeDirectory); 
+        localStorage.setItem('homeDirectory', response.data.user.homeDirectory);
         navigate('/dashboard'); // Redirect to the dashboard if login is successful
       } else {
         // Handle the case where login credentials are incorrect
@@ -24,15 +26,9 @@ function Login() {
       console.error('Login failed:', error);
       setDisplayError(true);
       // Handle other errors (network error, server error, etc.)
-      // In the catch block of your handleSubmit function
-    
-      //alert('An error occurred. Please try again later.'); 
       // Replace with a better error handling approach.
-      
     }
   };
-  
-
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>LDAP Server</h1>
